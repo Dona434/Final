@@ -12,7 +12,8 @@ import FarmerNavbar from "./Components/farmer/Navbar/FarmerNavbar";
 import Products from "./Components/UserProducts/Products";
 import Fproducts from "./Components/Admin/src/Pages/Fproducts";
 import UpdateProd from "./Components/Admin/src/Pages/UpdateProd";
-import ForgetPwd from "./Components/Admin/src/Pages/ForgetPwd";
+import ForgetPswd from "./Components/ForgetPwd/ForgetPswd";
+import PswdReset from "./Components/ForgetPwd/PswdReset";
 import EditProduct from "./Components/Admin/src/Pages/EditProduct";
 import FarmerAddedProds from "./Components/farmer/FarmerAddedProds";
 import Stocks from "./Components/farmer/Stocks";
@@ -23,7 +24,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Cart from "./Components/Cart/Cart";
 import { getTotals } from "./features/cart/CartSlice";
 import Reset from "./Components/ForgetPwd/ForgetPswd";
+import CommNavbar from "./Components/CommNavbar/CommNavbar"
 import Checkout from "./Components/Checkout/Checkout";
+import Updateprof from "./Components/ProfileUpdate/Updateprof";
+import Chat from "./Components/ChatBot/Chat";
 
 export const UserContext = createContext();
 const App = () => {
@@ -65,7 +69,13 @@ store.dispatch(getTotals());
           <Route path="home" element={user ? <Home /> : <Login />} />
           <Route path="products" element={user ? <Products /> : <Login />} />
           <Route path="cart" element={user ? <Cart/> : <Login />} />
+          
         </Route>
+
+        <Route path="/" element={user ? <CommNavbar/>:<Login/>}>
+          <Route path="updateprof" element={user ? <Updateprof/> : <Login />} />
+        </Route>
+
         <Route
           path="farmernavbar"
           element={user ? <FarmerNavbar /> : <Login />}
@@ -86,9 +96,9 @@ store.dispatch(getTotals());
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Login />} />
         <Route path="users" element={<UserList />} />
-        <Route path="forgetpassword" element={<Reset/>}/>
+        <Route path="pwd-reset" element={<PswdReset/>}/>
+        <Route path="forget-pass" element={<ForgetPswd/>}/>
         <Route path="checkout" element={user ? <Checkout/> : <Login />} />
-
       </Routes>
     </UserContext.Provider>
     </Provider>

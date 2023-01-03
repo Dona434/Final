@@ -22,14 +22,36 @@ import {
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import styled from "styled-components";
+import { BiUserCircle } from "react-icons/bi";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const Label = styled.span``;
 
 const Navbar = () => {
 	const cart = useAppSelector((state) => state.cart);
 	const { state, dispatch } = useContext(UserContext);
-
 	const navigate = useNavigate();
+	const user = JSON.parse(localStorage.getItem("user"));
+	const [data, setData] = useState([]);
+
+	const updateProfile = ()=>{
+		toast.success("Please Update your Profile");
+		navigate("/updateprof");
+	}
+
+	useEffect(()=>{
+      fetch("http://localhost:5000/getcartdetails/"+user._id, {
+            method: "get",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            }).then((response) => response.json())
+            .then((result) => {
+              setData(result.cart);
+            });
+	})
 
 	return (
 		<>
@@ -46,7 +68,14 @@ const Navbar = () => {
 						<NavLogo>WEIZEN MART</NavLogo>
 					</NavCenter>
 					<NavRight>
-
+ 					<NavMenuItem>
+            		<BiUserCircle style={{ color: "#a9740e", fontSize: "20px" }} onClick={updateProfile}/>
+            			{user.email ? (
+              		<p style={{ color: "#a9740e" }}>{user.firstName}</p>
+            			) : (
+              		<p style={{ color: "#a9740e" }}>{user.user.firstName}</p>
+            			)}
+          			</NavMenuItem>
 						<NavMenuItem>
 							<LogoutButton
 								onClick={() => {
@@ -62,7 +91,7 @@ const Navbar = () => {
 							<Link to="cart" style={{color:"black"}}>
 								<ShoppingCartOutlinedIcon />
 								<Label  className="nav-cart">
-								{cart.cartItems.length}
+								{data.length}
 							</Label>
 							</Link>
 						</NavMenuItem>

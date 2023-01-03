@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {useNavigate} from 'react-router-dom';
+import Announcement from "../Announcement";
 
 import {
   CardList,
@@ -24,11 +25,7 @@ const Products = () => {
 	const dispatcher = useAppDispatch();
 	const navigate = useNavigate();
 
-  const addToCart = (product) => {
-		dispatcher(addItemToCart(product));
-		navigate("/cart");
-    
-	};
+ 
 
   useEffect(() => {
     fetch("http://localhost:5000/allproducts", {
@@ -44,7 +41,61 @@ const Products = () => {
       });
   }, []);
 
-  
+  const addToCart = (product) => {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+		dispatcher(addItemToCart(product));
+		navigate("/cart");
+    fetch("http://localhost:5000/cart", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId:product._id,
+        productName:product.productName,
+        productPrice:product.productPrice,
+        productQuantity:1,
+        productState:product.productState,
+        postedBy:product.postedBy,
+        UserId: user._id,
+        firstName: user.firstName,
+        email: user.email,
+        phone: user.phone,
+      }),
+    })
+    .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.error) {
+          toast.error(data.error, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        } else {
+          toast.success(data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+	};
+
   const handleFilter=(e)=>{
     if(e.target.value == ''){
       setData(searchApiData);
@@ -63,6 +114,9 @@ const Products = () => {
 }
 return (
   <>
+  <div>
+  <Announcement />
+  </div>
     <Heading>Products</Heading>
     <div style={{margin:'20px 20%'}}>
      <input  type="search" style={{height:'35px',width:'25%'}} placeholder="Search Here" value={filterVal} onInput={(e)=>{handleFilter(e)}}/>

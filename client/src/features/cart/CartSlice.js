@@ -1,12 +1,28 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {  createSlice } from "@reduxjs/toolkit";
 import {toast} from "react-toastify";
-const initialState = {
-	cartItems: localStorage.getItem("cartItems") 
-	? JSON.parse(localStorage.getItem("cartItems")):[],
+let initialState = {
+	cartItems: localStorage.getItem('cartItems')?JSON.parse(localStorage.getItem('cartItems')):[],
 	loading: "idle",
 	cartTotalQuantity:0,
 	cartTotalAmount:0, 
 };
+
+
+
+// fetch("http://localhost:5000/getcartdetails/"+localStorage.getItem('user._id'), {
+// 	method: "get",
+// 	headers: {
+// 	  "Content-Type": "application/json",
+// 	},
+//   }).then((response) => response.json())
+//   .then((json) => {
+// 	initialState = {
+// 		cartItems: json.cart,
+// 		loading: "idle",
+// 		cartTotalQuantity:0,
+// 		cartTotalAmount:0, 
+// 	};
+//   });
 
 // export const fetchUserById = createAsyncThunk(
 // 	"users/fetchByIdStatus",
@@ -60,7 +76,7 @@ const CartSlice = createSlice({
 				toast.info(`Decreased ${action.payload.productName} cart quantity`,{
 					autoClose: 2500,
 				});
-			} else if(state.cartItems[itemIndex].cartQuantity==1){
+			} else if(state.cartItems[itemIndex].cartQuantity===1){
 				const nextCartItems = state.cartItems.filter(
 					cartItems=> cartItems._id !== action.payload._id
 				)
@@ -97,8 +113,6 @@ const CartSlice = createSlice({
 	state.cartTotalAmount = total;
 	},
 
-	
-
 	},
 
 	// extraReducers: (builder) => {
@@ -120,5 +134,5 @@ const CartSlice = createSlice({
 	// },
 });
 
-export const { addItemToCart,removeFromCart,decreaseCart,clearCart,getTotals } = CartSlice.actions;
+export const { addItemToCart,removeFromCart,decreaseCart,clearCart,getTotals ,getItems} = CartSlice.actions;
 export default CartSlice.reducer;
