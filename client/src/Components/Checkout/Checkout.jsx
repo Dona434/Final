@@ -9,20 +9,31 @@ import styled from 'styled-components';
 
 
 const Checkout = () => {
-    const cart = localStorage.getItem("cartItems");
 
     const Error = styled.span`
   color:red;
   padding:5px;
   `;
-
+    let userId=JSON.parse(localStorage.getItem('user'));
+    let cart=[];
+            fetch("http://localhost:5000/checkoutlist/"+userId._id, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    cart=data.cart;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
     const user = JSON.parse(localStorage.getItem("user"));
-
-    console.log('cart====',cart.length);
     const [address, setAddress] = useState("");
     const [addressErr, setAddressErr] = useState(false);
     let values=[];
-for(let i=0;i<cart.length;i++){
+    for(let i=0;i<cart.length;i++){
     let value = {
         id: user._id,
         firstName: user.firstName,
@@ -32,12 +43,12 @@ for(let i=0;i<cart.length;i++){
         prodId: cart[i]._id,
         productName: cart[i].productName,
         cartQuantity: cart[i].cartQuantity,
-        productPrice: cart[i].productPrice
+        productPrice: cart[i].productPrice,
+        
     }
+    
     values.push(value);
 }
-
-console.log("values==",values);
 
     const postData = () => {
 

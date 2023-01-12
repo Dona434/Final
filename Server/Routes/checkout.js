@@ -5,6 +5,7 @@ const router = express.Router();
 const Checkout = mongoose.model("Checkout");
 const cart=require('../models/Cart');
 const product=require('../models/Products');
+const checkout=require('../models/Checkout');
 //const requireLogin = require("../Middleware/requireLogin");
 //const { route } = require("./auth");
 
@@ -42,7 +43,10 @@ router.post("/checkout",async (req, res) => {
     //     console.log(err);
     //   });
     let userId=req.body.userId;
+    
     let userDetails=req.body.address;
+
+    let photo=req.body.photo;
     // if (
 
     //   !userDetails.address 
@@ -51,8 +55,11 @@ router.post("/checkout",async (req, res) => {
     //   return res.status(422).json({ error: "Please add  the address" });
     // }
     let cartproducts=await cart.find({
-      UserId:userId
+      UserId:userId,
+      status:true
     });
+
+
    cartproducts.forEach(async(prod)=>{
       let updateProductStock=await product.update({
         _id:mongoose.Types.ObjectId(prod.productId)
@@ -67,11 +74,11 @@ router.post("/checkout",async (req, res) => {
       firstName:userDetails.firstName,
       email:userDetails.email,
       phone:userDetails.phone,
-      address:userDetails.address,
       prodId:prod.productId,
       productName:prod.productName,
       cartQuantity:prod.productQuantity,
-      productPrice:prod.productQuantity
+      productPrice:prod.productPrice,
+     // photo:photo
     });
     checkout
       .save();
@@ -88,6 +95,59 @@ router.post("/checkout",async (req, res) => {
     res.json({ message:'Success'});
 
   });
+  
+  router.get("/checkoutlist/:id",async (req,res)=>{
+    let userId=req.params.id;
+    let cartproducts=await cart.find({
+      UserId:userId,
+      status:true
+    });
+
+    let cartDetails=await cart.aggregate([
+      {$match:{
+        UserId:userId,
+        status:true
+      },
+    },
+    {
+      $addFields:{
+        productId:{$toObjectId:'$productId'}
+      }
+    },
+    {
+      $lookup:{
+        from:'products',
+        localField:'productId',
+        foreignField:'_id',
+        as:'productDetails'
+      }
+    },
+    {
+      $unwind:'$productDetails'
+    },
+    {
+      $addFields:{
+        cartQuantity:'$productQuantity',
+        productQuantity:'$productDetails.productQuantity',
+        productDescription:'$productDetails.productDescription',
+        photo:'$productDetails.photo'
+      }
+    },
+    {$unset:'productDetails'}
+    ]);
+
+    res.status(200).send({cart:cartDetails});
+  })
+  
+  router.get("/checkout/:id",async (req,res)=>{
+    let userId=req.params.id;
+    let orders=await checkout.find({
+      UserId:userId,
+      status:true
+    });
+    res.status(200).send({orders:orders});
+    
+  })
   
   
   

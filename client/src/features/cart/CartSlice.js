@@ -1,4 +1,5 @@
 import {  createSlice } from "@reduxjs/toolkit";
+import { Navigate } from "react-router-dom";
 import {toast} from "react-toastify";
 let initialState = {
 	cartItems: localStorage.getItem('cartItems')?JSON.parse(localStorage.getItem('cartItems')):[],
@@ -45,15 +46,11 @@ const CartSlice = createSlice({
 				(item)=>item._id === action.payload._id);
 				if(itemIndex>=0){
 					state.cartItems[itemIndex].cartQuantity += 1;
-					toast.info(`Increased ${action.payload.productName} Quantity`,{
-						autoClose: 2500,
-					});
+					
 				}else{
 			const tempProduct = {...action.payload,cartQuantity:1};
 			state.cartItems.push(tempProduct);
-			toast.success(`${action.payload.productName} Added to cart`,{
-				autoClose: 2500,
-			});
+			
 		}
 		localStorage.setItem("cartItems",JSON.stringify(state.cartItems));
 		},
@@ -63,27 +60,21 @@ const CartSlice = createSlice({
 			)
 			state.cartItems = nextCartItems;
 			localStorage.setItem("cartItems",JSON.stringify(state.cartItems));
-			toast.error(`${action.payload.productName} Removed from cart`,{
-				autoClose: 2500,
-			});
+			
 		},
 		decreaseCart(state,action){
 			const itemIndex = state.cartItems.findIndex(
 				cartItems => cartItems._id === action.payload._id
 			)
-			if(state.cartItems[itemIndex].cartQuantity>1){
-				state.cartItems[itemIndex].cartQuantity -=1
-				toast.info(`Decreased ${action.payload.productName} cart quantity`,{
-					autoClose: 2500,
-				});
+			if(state.cartItems[itemIndex].producttQuantity>1){
+				state.cartItems[itemIndex].productQuantity -=1
+				
 			} else if(state.cartItems[itemIndex].cartQuantity===1){
 				const nextCartItems = state.cartItems.filter(
 					cartItems=> cartItems._id !== action.payload._id
 				)
 				state.cartItems = nextCartItems;
-				toast.error(`${action.payload.productName} Removed from cart`,{
-					autoClose: 2500,
-				});
+				
 			}
 			localStorage.setItem("cartItems",JSON.stringify(state.cartItems));
 

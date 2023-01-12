@@ -15,9 +15,13 @@ import { Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { addItemToCart } from "../../features/cart/CartSlice";
 import { toast, ToastContainer } from "react-toastify";
+import Slider from "../Slider";
+import KommunicateChat from "../ChatBot/Chat";
+import { color } from "@mui/system";
 
 const Products = () => {
 
+  
   const [data, setData] = useState([]);
   const [searchApiData,setSearchApiData] = useState([]);
   const [filterVal,setFilterVal] = useState("");
@@ -28,6 +32,7 @@ const Products = () => {
  
 
   useEffect(() => {
+   
     fetch("http://localhost:5000/allproducts", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
@@ -43,9 +48,13 @@ const Products = () => {
 
   const addToCart = (product) => {
 
+    if(product.productQuantity<=0){
+      toast.error("Stock Over");
+    }
     const user = JSON.parse(localStorage.getItem("user"));
 
-		dispatcher(addItemToCart(product));
+		if(product.productQuantity>0){
+    dispatcher(addItemToCart(product));
 		navigate("/cart");
     fetch("http://localhost:5000/cart", {
       method: "post",
@@ -94,6 +103,7 @@ const Products = () => {
       .catch((err) => {
         console.log(err);
       });
+    }
 	};
 
   const handleFilter=(e)=>{
@@ -116,7 +126,9 @@ return (
   <>
   <div>
   <Announcement />
-  </div>
+  <Slider/>
+  <KommunicateChat/>
+ 
     <Heading>Products</Heading>
     <div style={{margin:'20px 20%'}}>
      <input  type="search" style={{height:'35px',width:'25%'}} placeholder="Search Here" value={filterVal} onInput={(e)=>{handleFilter(e)}}/>
@@ -129,7 +141,7 @@ return (
           <Image alt="" src={product.photo} />
           <Para> Price(INR/Kg): {product.productPrice}</Para>
           <Para>State: {product.productState}</Para>
-          <Para> Quantity(Kg): {product.productQuantity} Kg</Para>
+          <Para> Quantity(Kg): {product.productQuantity>0 ? product.productQuantity :  "STOCK OVER"}</Para>
           <Para> {product.productDescription}</Para>
           <Button
             onClick={() => {
@@ -138,9 +150,18 @@ return (
           >
             Add to Cart
           </Button>
+          {/* <Button
+            onClick={() => {
+              addToCart(product);
+            }}
+          >
+            Request Stock
+          </Button> */}
         </CardContainer>
       ))}
     </CardList>
+    </div>
+  
   </>
 );
 };
