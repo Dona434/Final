@@ -40,7 +40,7 @@ margin-top:15px;
 `;
 
   const [data, setData] = useState([]);
-  const [productPrice, setProductPrice] = useState([]);
+  //const [productPrice, setProductPrice] = useState([]);
   //const [photo, setPhoto] = useState([]);
   console.log('data', data)
     const dispatch = useDispatch();
@@ -66,10 +66,11 @@ margin-top:15px;
               result.cart.forEach(element => {
                 //setPhoto(element.photo);
                 total=total+(element.productPrice*element.cartQuantity)
-                setProductPrice(element.productPrice);
+                //setProductPrice(element.productPrice);
                 
               });
               setTotal(total);
+              localStorage.setItem("subtotal",total);
             });
   }
     useEffect(()=>{
@@ -205,33 +206,34 @@ margin-top:15px;
 
     const handleCheckout =()=>{
       
-        let userid=JSON.parse(localStorage.getItem('user'));
-        fetch("http://localhost:5000/checkout", {
-            method: "post",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body:JSON.stringify({
-              userId:userid._id,
-              address:{
-                firstName: userId.firstName,
-                email: userId.email,
-                phone: userId.phone,
-              },
-             productPrice:productPrice,
-            // photo:photo
-            })
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
-              if (data.error) {
-                console.log(data.error);
-              } 
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+        // let userid=JSON.parse(localStorage.getItem('user'));
+        // fetch("http://localhost:5000/checkout", {
+        //     method: "post",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     body:JSON.stringify({
+        //       userId:userid._id,
+        //       address:{
+        //         firstName: userId.firstName,
+        //         email: userId.email,
+        //         phone: userId.phone,
+        //       },
+        //      productPrice:productPrice,
+        //     // photo:photo
+        //     })
+        //   })
+        //     .then((res) => res.json())
+        //     .then((data) => {
+        //       console.log(data);
+        //       if (data.error) {
+        //         console.log(data.error);
+        //       } 
+        //     })
+        //     .catch((err) => {
+        //       console.log(err);
+        //     });
+        //     toast.success("Order Placed Successfully")
         navigate("/checkout");
         
     }

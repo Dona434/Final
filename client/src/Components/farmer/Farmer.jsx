@@ -199,7 +199,7 @@ const Farmer = () => {
                 </InputWrapper>
                 <InputWrapper>
                   <InputLabel>Product State</InputLabel>
-                  <select  onChange={(e) => setProductState(e.target.value)}>
+                  <select  onChange={(e) => setProductState(e.target.value)} onSelect={handleProductState}>
                   <option selected="true" disabled="disabled" value={productState}>
                     Select State
                   </option>

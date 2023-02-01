@@ -17,6 +17,10 @@ const CheckoutSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    address: {
+      type: String,
+      required: true,
+    },
     prodId:{
       type:String,
       required: true,
@@ -29,10 +33,34 @@ const CheckoutSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-     productPrice:{
+    //  productPrice:{
+    //     type: Number,
+    //     required: true,
+    // },
+     subtotal:{
         type: Number,
         required: true,
     },
+    // locality: {
+    //   type: Number,
+    //   required: true,
+    // },
+    // pincode: {
+    //   type: Number,
+    //   required: true,
+    // },
+    // city: {
+    //   type: String,
+    //   required: true,
+    // },
+    // state: {
+    //   type: String,
+    //   required: true,
+    // },
+    // landmark: {
+    //   type: String,
+      
+    // },
     // photo:{
     //   type:String
     // }
