@@ -33,34 +33,34 @@ const CheckoutSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    //  productPrice:{
-    //     type: Number,
-    //     required: true,
-    // },
+     productPrice:{
+        type: Number,
+        required: true,
+    },
+    landmark: {
+      type: String,
+      
+    },
      subtotal:{
         type: Number,
         required: true,
     },
-    // locality: {
-    //   type: Number,
-    //   required: true,
-    // },
-    // pincode: {
-    //   type: Number,
-    //   required: true,
-    // },
-    // city: {
-    //   type: String,
-    //   required: true,
-    // },
-    // state: {
-    //   type: String,
-    //   required: true,
-    // },
-    // landmark: {
-    //   type: String,
-      
-    // },
+    locality: {
+      type: String,
+      required: true,
+    },
+    pincode: {
+      type: Number,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    State: {
+      type: String,
+      required: true,
+    },
     // photo:{
     //   type:String
     // }

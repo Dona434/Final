@@ -26,7 +26,6 @@ const Checkout = () => {
     let userId=JSON.parse(localStorage.getItem('user'));
     // const [data, setData] = useState([]);
     // const [productPrice, setProductPrice] = useState([]);
-    const [State,setState] = useState("");
 
     let cart=[];
 
@@ -53,6 +52,7 @@ const Checkout = () => {
     const [pincodeErr, setPincodeErr] = useState(false);
     const [city, setCity] = useState("");
     const [cityErr, setCityErr] = useState(false);
+    const [State,setState] = useState("");
     const [landmark, setLandmark] = useState("");
     const [landmarkErr, setLandmarkErr] = useState(false);
     const navigate = useNavigate();
@@ -85,13 +85,13 @@ const onHomeClick=()=>{
 //     setstateErr(true)
 //    }
 }
-    const postData = () => {
+    const postData = (e) => {
 
         // if (" ".test(State)) {
         //     toast.error("Invalid Email ID");
         //     return;
         //   }
-
+      e.preventDefault();
         if (!/(^[a-zA-Z][a-zA-Z\s]{0,100}[a-zA-Z]$)/.test(address)) {
             toast.error("Invalid Address");
             return;
@@ -150,10 +150,14 @@ const onHomeClick=()=>{
                     email: userId.email,
                     phone: userId.phone,
                     address:address,
-                    pincode:pincode,
                     locality:locality,
+                    pincode:pincode,
+                    city:city,
+                    State:State,
+                    landmark:landmark,
                   },
-                //productPrice:productPrice,
+                
+                 
                  subtotal:subtotal,
                 // photo:photo
                 })
@@ -189,6 +193,7 @@ const onHomeClick=()=>{
 
 
     const handleAddress = (e1) => {
+        e1.preventDefault()
         if (address.match(/(^[a-zA-Z][a-zA-Z\s]{0,100}[a-zA-Z]$)/)) {
             console.log("Accepted")
         }
@@ -197,6 +202,7 @@ const onHomeClick=()=>{
         }
     }
     const handlePincode = (e1) => {
+        e1.preventDefault()
         if (pincode.match(/^\d{4}$|^\d{6}$/)) {
             console.log("Accepted")
         }
@@ -205,6 +211,7 @@ const onHomeClick=()=>{
         }
     }
     const handleLocality = (e1) => {
+        e1.preventDefault()
         if (locality.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)) {
             console.log("Accepted")
         }
@@ -213,6 +220,7 @@ const onHomeClick=()=>{
         }
     }
     const handleLandmark = (e1) => {
+        e1.preventDefault()
         if (landmark.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)) {
             console.log("Accepted")
         }
@@ -221,6 +229,7 @@ const onHomeClick=()=>{
         }
     }
     const handleCity = (e1) => {
+        e1.preventDefault()
         if (city.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)) {
             console.log("Accepted")
         }
@@ -300,8 +309,11 @@ const onHomeClick=()=>{
                     />
                     {cityErr && !city.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/) ? <Error>Please enter a valid city!</Error> : ""}
                      <p className="label">Enter your State</p> <br></br>
-                    <select style={{height:30}} onSelect={(e) => setState(e.target.value)} onChange={handleState}>
-                    <option selected="true" disabled="disabled" >
+                    <select style={{height:30}} onChange={(e) => setState(e.target.value)} 
+                    required
+                  
+                    >
+                    <option defaultValue={true}   value={State}>
                     Select State
                   </option>
                     <option>UP</option>
@@ -314,19 +326,19 @@ const onHomeClick=()=>{
                     <option>Andhra Pradesh</option>
                     <option>Telengana</option>
                     </select>
-                    {State.match(" ")?<Error>Enter a valid state name!</Error>:""}
+                    
                      <p className="label">Enter your Landmark(optional)</p>
                      <input
-                       // className="forminput"
+                        className="forminput"
                         type="text"
                         placeholder="Landmark"
                         onChange={(e) => setLandmark(e.target.value)}
-                        //onKeyUp={handleLandmark}
+                        onKeyUp={handleLandmark}
                     />
                     {landmarkErr && !landmark.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/) ? <Error>Please enter a valid landmark!</Error> : ""}
 
                     <br />
-                    <button className="signup-button" onClick={() => postData()}>
+                    <button className="signup-button" onClick={(e) => postData(e)}>
                         Proceed to Payment
                     </button>
                     <ToastContainer />

@@ -72,7 +72,7 @@ const Farmer = () => {
               progress: undefined,
             });
           } else {
-            toast.success("Product Added Successfully", {
+            toast.success("New Product Added Successfully", {
               position: "top-right",
               autoClose: 2000,
               hideProgressBar: false,
@@ -104,11 +104,11 @@ const Farmer = () => {
           if (data.error) {
             console.log(data.error);
           } else {
-            toast.success("New Product Added Successfully");
+            console.log("Stock Added Successfully");
           }
         });
         
-      navigate("/farmernavbar/farmer");
+      navigate("/farmer/addedprods");
     }
   }, [url]);
 
@@ -175,12 +175,9 @@ const Farmer = () => {
 
   return (
     <>
-    <Announcement />
     <div>
     <ToastContainer />
-
       <FarmerContainer>
-        <Sidebar />
         <FarmerWrapper>
           <CardHeading>Add Products</CardHeading>
           <FarmerCard>

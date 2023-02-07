@@ -33,7 +33,7 @@ useEffect(()=>{
           <h3 className='product-title'>Product</h3>
           <h3 className='price'>Ordered Date</h3>
           <h3 className='quantity'>Quantity(Kg)</h3>
-          <h3 className='total'>Subtotal(INR)</h3>
+          <h3 className='total'>Price(INR)</h3>
           
       </div>
       <div className='cart-items'>
@@ -52,7 +52,7 @@ useEffect(()=>{
                         
                     </div>
                     <div className='cart-product-total-price'>
-                        {cartItems.subtotal}
+                        {cartItems.productPrice}
                     </div>
                     </div>
             ))}

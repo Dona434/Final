@@ -47,9 +47,8 @@ router.post("/checkout",async (req, res) => {
     let userDetails=req.body.address;
 
     let subtotal=req.body.subtotal;
-    //let productPrice=req.body.productPrice;
 
-    let photo=req.body.photo;
+    
     // if (
 
     //   !userDetails.address 
@@ -84,22 +83,22 @@ router.post("/checkout",async (req, res) => {
         }
       });
       const checkout = new Checkout({
-       id:userDetails.id,
+      id:userDetails.id,
       firstName:userDetails.firstName,
       email:userDetails.email,
       phone:userDetails.phone,
       address:userDetails.address,
-      // locality:userDetails.locality,
-      // pincode:userDetails.pincode,
-      // city:userDetails.city,
-      // state:userDetails.state,
-      // landmark:userDetails.landmark,
+      locality:userDetails.locality,
+      pincode:userDetails.pincode,
+      city:userDetails.city,
+      State:userDetails.State,
+      landmark:userDetails.landmark,
       prodId:prod.productId,
       productName:prod.productName,
       cartQuantity:prod.productQuantity,
-     // productPrice:productPrice,
+      productPrice:prod.productPrice,
       subtotal:subtotal,
-     // photo:photo
+      //photo:prod.photo
     });
     checkout
       .save();
