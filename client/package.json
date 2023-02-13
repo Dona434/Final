@@ -29,6 +29,7 @@
     "react-scripts": "^5.0.1",
     "react-speech-recognition": "^3.10.0",
     "react-spinners": "^0.13.7",
+    "react-to-print": "^2.14.11",
     "react-toastify": "^9.0.8",
     "recharts": "^2.1.14",
     "redux": "^4.2.0",
