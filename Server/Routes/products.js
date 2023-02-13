@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 const Product = mongoose.model("product");
+const Stockreq = mongoose.model("stockreq")
+const StockReqFarmer = mongoose.model("stockreqfarmer")
 const requireLogin = require("../Middleware/requireLogin");
 const { route } = require("./auth");
 
@@ -25,6 +27,7 @@ router.post("/addproduct", requireLogin, (req, res) => {
   ) {
     return res.status(422).json({ error: "Please add all the details" });
   }
+  
 
   const product = new Product({
     productName,
@@ -78,8 +81,15 @@ router.patch("/updateproduct/:id", async (req, res) => {
     const { id } = req.params;
     const updatedproduct = await Product.findByIdAndUpdate(id, req.body, {
       new: true,
-    });
+    });      
+    const updatedquantity = await Stockreq.find({$or:[{productId:id}]}).update(
+      productQuantity=req.body
+    )
+    const quantityupdate = await StockReqFarmer.find({$or:[{productId:id}]}).update(
+      productQuantity=req.body
+    )
     console.log(updatedproduct);
+    //console.log(updatedquantity);
     res.status(201).json(updatedproduct);
   } catch (error) {
     res.status(422).json(error);

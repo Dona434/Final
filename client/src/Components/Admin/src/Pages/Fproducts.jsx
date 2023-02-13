@@ -99,7 +99,7 @@ const Fproducts = () => {
                 <td>{product.productDescription}</td>
                 <td>
                   <Link className="btn" to={`/edit/${product._id}`}>
-                    Validate Product
+                    ValidateProduct
                   </Link>
                 </td>
               </tr>

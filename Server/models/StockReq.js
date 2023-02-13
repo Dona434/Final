@@ -15,10 +15,10 @@ const stockreqSchema = new mongoose.Schema(
       type: String,
       required:true
     },
-    // productQuantity:{
-    //   type: Number,
-    //   required:true
-    // },
+    productQuantity:{
+      type: Number,
+      required:true
+    },
     productState:{
       type: String,
       required:true
@@ -45,6 +45,6 @@ const stockreqSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const stockreq=mongoose.model("stockreq", stockreqSchema);
+const stockreqModel=mongoose.model("stockreq", stockreqSchema);
 
-module.exports=stockreq;
+module.exports=stockreqModel;

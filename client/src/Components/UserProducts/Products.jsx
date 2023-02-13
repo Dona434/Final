@@ -126,7 +126,6 @@ const Products = () => {
 
 const handleClick=(product)=>{
   const user = JSON.parse(localStorage.getItem("user"));
-  //setDisplayBox(true);
   fetch("http://localhost:5000/stockreq", {
     method: "post",
     headers: {
@@ -136,7 +135,7 @@ const handleClick=(product)=>{
       productId:product._id,
       productName:product.productName,
       productPrice:product.productPrice,
-      //productQuantity:product.productQuantity,
+      productQuantity:product.productQuantity,
       productState:product.productState,
       postedBy:product.postedBy,
       UserId: user._id,

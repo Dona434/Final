@@ -3,12 +3,11 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./stockRequests.scss";
 import SendIcon from '@mui/icons-material/Send';
+import { CardList } from "../../../UserProducts/ProductElements";
 
 const StockRequests = () => {
   const [data, setData] = useState([]);
-  const [data1, setData1] = useState([]);
-  const [quantityUpdated, setQuantityUpdated] = useState([]);
-
+  
 
   useEffect(() => {
     fetch("http://localhost:5000/allreqs", {
@@ -20,27 +19,59 @@ const StockRequests = () => {
       .then((result) => {
         setData(result.requests);
       });
-      
-    // fetch("http://localhost:5000/allproducts", {
-    //   headers: {
-    //     Authorization: "Bearer " + localStorage.getItem("jwt"),
-    //   },
-    // })
-    //   .then((res) => res.json())
-    //   .then((result) => {
-    //     setData1(result.products);
-    //   });
+  
   }, []);
 
-const handleClick=()=>{
-  toast.success("Request Send successfully");
-}
+const handleStockClick=(request)=>{
 
-const handleStockAdded=()=>{
-  setQuantityUpdated(false);
-}
-const handleStockNotAdded=()=>{
-  setQuantityUpdated(true);
+  const user = JSON.parse(localStorage.getItem("user"));
+  fetch("http://localhost:5000/stockfarmer", {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      productId:request.productId,
+      productName:request.productName,
+      productPrice:request.productPrice,
+      productQuantity:request.productQuantity,
+      productState:request.productState,
+      postedBy:request.postedBy,
+      UserId: request.UserId,
+      firstName: request.firstName,
+      email: request.email,
+      phone: request.phone,
+    }),
+  })
+  .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      if (data.error) {
+        toast.error(data.error, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else {
+        toast.success("Request Send Sucessfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 
@@ -57,7 +88,7 @@ const handleStockNotAdded=()=>{
               <th>Product State</th>
               <td>{reqs.productState}</td>
              </tr>
-             {/* <tr>
+             <tr>
               <th>Farmer Name</th>
               <td>{reqs.postedBy.firstName}</td>
              </tr>
@@ -68,7 +99,7 @@ const handleStockNotAdded=()=>{
              <tr>
               <th>Farmer email</th>
               <td>{reqs.postedBy.email}</td>
-             </tr> */}
+             </tr>
              <tr>
               <th>Requested User</th>
               <td>{reqs.firstName}</td>
@@ -86,29 +117,17 @@ const handleStockNotAdded=()=>{
               <td>{reqs.createdAt}</td>
              </tr>
              <br></br>
-             {/* <button className="bttn" onClick={handleClick}>Send Request to Farmer 
-          <SendIcon className="sendbtn" />
-          </button> <br></br> */}
-           {/* {data1.productQuantity>0?"Stock Added":"Stock Not Added"} */}
-          <button className="bttn" onClick={handleStockAdded}>
-          Stock Added
-          </button>
-          <button className="bttn" onClick={handleStockNotAdded}>
-          Stock Not Added
-          </button>
-          <br></br>
-          <br></br>
-          {quantityUpdated?"Stock Not Added":"Stock Added" }
-          <br></br>
-          <br></br>
+          
+          <button className="bttn1" onClick={() => handleStockClick(reqs)}>Request Stock to Farmer <SendIcon/></button>
+          {reqs.productQuantity>0?<h3 className="stockadded1">Stock Added</h3>:<h3 className="stocknotadded1">Stock not added</h3>}         
+        
           <hr style={{width:"35rem",borderBlockColor:"gold"}}></hr>
              <br></br>
+             
              </div>
             ))}
           </table>
-          <button className="bttn" onClick={handleClick}>Send Request to Farmer 
-          <SendIcon className="sendbtn" />
-          </button>
+          
     </>
   );
 };

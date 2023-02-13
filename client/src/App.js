@@ -31,6 +31,7 @@ import StockRequests from "./Components/Admin/src/Pages/StockRequests";
 import FarmerHome from "../src/Components/farmer/FarmerHome";
 import StockReqs from "./Components/farmer/StockReqs";
 import EditQuantity from "./Components/farmer/EditQuantity";
+import Reciept from "./Components/Orders/Reciept";
 
 export const UserContext = createContext();
 const App = () => {
@@ -49,22 +50,25 @@ const App = () => {
 
         if (user.usertype === "Admin") {
           navigate("/admin");
-        } else {
-          navigate("/login");
-        }
+        } 
+        // else {
+        //   navigate("/login");
+        // }
         if (user.usertype === "Farmer") {
           navigate("/farmer");
-        } else {
-          navigate("/login");
-        }
+        } 
+        // else {
+        //   navigate("/login");
+        // }
         if (user.usertype === "Customer") {
           navigate("/home");
-        } else {
-          navigate("/login");
         }
+        //  else {
+        //   navigate("/login");
+        // }
       }
       } else {
-        
+        navigate("/login");
       }
   }, []);
 
@@ -75,7 +79,7 @@ store.dispatch(getTotals());
     <UserContext.Provider value={{ state, dispatch }}>
     <ToastContainer/>
       <Routes>
-        <Route path="/" element={user ? <Navbar /> : <Home />}>
+      <Route path="/" element={user?.usertype == 'Customer' || user?.usertype == 'Farmer' ? <Navbar /> : <Home />}>
           <Route path="home" element={user ? <Home /> : <Login />} />
           <Route path="products" element={user ? <Products /> : <Login />} />
           <Route path="cart" element={user ? <Cart/> : <Login />} />
@@ -107,6 +111,10 @@ store.dispatch(getTotals());
         <Route
           path="editquantity/:id"
           element={user ? <EditQuantity /> : <Login />}
+        ></Route>
+        <Route
+          path="reciept/:id"
+          element={user ? <Reciept/> : <Login />}
         ></Route>
         <Route path="updateprod" element={<UpdateProd />} />
         <Route path="signup" element={<Signup />} />
