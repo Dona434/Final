@@ -8,13 +8,14 @@ import Newsletter from "../Newsletter";
 // import Products from "../Products";
 import Slider from "../Slider";
 
+
 const Home = () => {
   return (
-    <div>
+    <div id="google_element">
       <Announcement />
       <Slider />
       <Categories />
-      <Link
+      {/* <Link
         style={{
           marginLeft: "90%",
           marginBottom: "10%",
@@ -23,8 +24,9 @@ const Home = () => {
         to="/products"
       >
         View all products
-      </Link>
+      </Link> */}
       {/* <Products/> */}
+      
     </div>
   );
 };

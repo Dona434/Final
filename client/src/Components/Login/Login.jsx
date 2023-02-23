@@ -44,7 +44,7 @@ const Login = () => {
     setLoading(true)
     setTimeout(()=>{
       setLoading(false)
-    },10500)
+    },10600)
 
     fetch("http://localhost:5000/signin", {
       method: "post",

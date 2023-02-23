@@ -203,6 +203,11 @@ const Farmer = () => {
                     <option>UP</option>
                     <option>Bihar</option>
                     <option>Punjab</option>
+                    <option>Gujarat</option>
+                    <option>Tamil Nadu</option>
+                    <option>West Bengal</option>
+                    <option>Himachal Pradesh</option>
+                    <option>Rajasthan</option>
                   </select>
                 {pstateErr&&!productState.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)?<Error>Enter a valid state name!</Error>:""}
                 </InputWrapper>

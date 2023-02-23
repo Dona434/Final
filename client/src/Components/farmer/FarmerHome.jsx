@@ -1,8 +1,24 @@
 import styled from "styled-components";
-import { Outlet, NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Outlet, Link } from "react-router-dom";
 import Announcement from "../Announcement";
 import Topbar from "./Topbar/Topbar";
+
+const NavItems = styled(Link)`
+  display: inline-block;
+  text-decoration: none;
+  color: black;
+  border: 1px solid #fff;
+  padding: 7px;
+  font-size: 13px;
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  &:hover {
+    border: 1px solid #a9740e;
+    background: #a9740e;
+    transition: 1s;
+  }
+`;
 
 const Dashboard = () => {
   
@@ -13,30 +29,30 @@ const Dashboard = () => {
     <StyledDashboard>
       <SideNav>
         <h3>Quick Links</h3>
-        <NavLink
+        <NavItems
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
           to="/farmer/addprods"
         >
           Add Products
-        </NavLink>
-        <NavLink
+        </NavItems>
+        <NavItems
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
           to="/farmer/addedprods"
         >
           Products
-        </NavLink>
-        <NavLink
+        </NavItems>
+        <NavItems
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
           to="/farmer/stockrequests"
         >
           Stock Requests
-        </NavLink>
+        </NavItems>
         {/* <NavLink
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"

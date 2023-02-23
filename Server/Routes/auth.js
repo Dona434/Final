@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const User = mongoose.model("User");
 const { JWT_SECRET } = require("../keys");
 const nodemailer = require('nodemailer');
+const requireLogin = require("../Middleware/requireLogin");
 const app = express();
 app.use(express.json());
 
@@ -76,6 +77,19 @@ router.post("/signin", (req, res) => {
       });
   });
 });
+
+router.get("/allfarmers", requireLogin, (req, res) => {
+  User.find({usertype:"Farmer"})
+    //.populate("postedBy", "_id firstName")
+    .then((farmers) => {
+      res.json({ farmers });
+      console.log(farmers);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 
 router.put("/sendotp" ,async (req,res)=>{
   console.log(req.body)
