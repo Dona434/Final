@@ -187,6 +187,7 @@ const Farmer = () => {
                   <InputLabel>Product Name</InputLabel>
                   <Input
                     type="text"
+                    className="border border-gray-400"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     onKeyUp={handleProductName}
@@ -194,20 +195,15 @@ const Farmer = () => {
                   ></Input>
                 {pnameErr&&!productName.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)?<Error>Enter a valid product name!</Error>:""}
                 </InputWrapper>
-                <InputWrapper>
+                <InputWrapper >
                   <InputLabel>Product State</InputLabel>
-                  <select  onChange={(e) => setProductState(e.target.value)} onSelect={handleProductState}>
+                  <select className="border border-gray-400" style={{marginLeft:"10px"}} onChange={(e) => setProductState(e.target.value)} onSelect={handleProductState}>
                   <option selected="true" disabled="disabled" value={productState}>
                     Select State
                   </option>
                     <option>UP</option>
                     <option>Bihar</option>
                     <option>Punjab</option>
-                    <option>Gujarat</option>
-                    <option>Tamil Nadu</option>
-                    <option>West Bengal</option>
-                    <option>Himachal Pradesh</option>
-                    <option>Rajasthan</option>
                   </select>
                 {pstateErr&&!productState.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)?<Error>Enter a valid state name!</Error>:""}
                 </InputWrapper>
@@ -215,6 +211,7 @@ const Farmer = () => {
                 <InputWrapper>
                   <InputLabel>Product Price(INR/Kg)</InputLabel>
                   <Input
+                  className="border border-gray-400"
                     type="number"
                     value={productPrice}
                     onKeyUp={handlePrice}
@@ -227,6 +224,7 @@ const Farmer = () => {
                 <InputWrapper>
                   <InputLabel>Product Quantity(Kg)</InputLabel>
                   <Input
+                  className="border border-gray-400"
                     type="number"
                     value={productQuantity}
                     onKeyUp={handleKg}
@@ -239,6 +237,7 @@ const Farmer = () => {
                 <InputWrapper>
                   <InputLabel>Product Description</InputLabel>
                   <TextArea
+                  className="border border-gray-400"
                     rows="4"
                     cols="50"
                     value={productDescription}
@@ -256,7 +255,7 @@ const Farmer = () => {
                     onChange={(e) => setImage(e.target.files[0])}
                   ></Input>
                 </InputWrapper>
-                <SubmitButton onClick={postDetails}>Submit</SubmitButton>
+                <SubmitButton onClick={postDetails} style={{marginBottom:"20px"}}>Submit</SubmitButton>
               </CardForm>
             </CardContainer>
           </FarmerCard>

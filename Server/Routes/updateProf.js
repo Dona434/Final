@@ -2,18 +2,33 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
-const user = require('../models/User');
+const user = mongoose.model("User");
 
 
-router.patch("/updateprofile/:id", async (req, res) => {
-  let userId=req.params.id;
-  let update=await user.findByIdAndUpdate(userId,{
-    firstName:req.body.firstName,
-    lastName:req.body.lastName,
-    phone:req.body.phone,
-    
-  },);
-  res.json({message:'updated', code: 200});
+router.put("/updateprofile/:id", async (req, res) => {
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const phone = req.body.phone;
+  const id = req.params.id;
+
+  try {
+    const result = await user.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { firstName, lastName,phone } }
+    );
+
+    if (result.modifiedCount === 1) {
+      res.json({ message: 'Profile updated successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
   });
+  
   module.exports = router;
+  
+
   

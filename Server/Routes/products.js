@@ -5,6 +5,7 @@ const router = express.Router();
 const Product = mongoose.model("product");
 const Stockreq = mongoose.model("stockreq")
 const StockReqFarmer = mongoose.model("stockreqfarmer")
+const user = mongoose.model("User");
 const requireLogin = require("../Middleware/requireLogin");
 const { route } = require("./auth");
 
@@ -50,7 +51,7 @@ router.post("/addproduct", requireLogin, (req, res) => {
 
 router.get("/allproducts", requireLogin, (req, res) => {
   Product.find()
-    .populate("postedBy", "_id firstName")
+    .populate("postedBy", "_id firstName lastName")
     .then((products) => {
       res.json({ products });
     })
@@ -73,7 +74,19 @@ router.get("/getproduct/:id", async (req, res) => {
     res.status(422).json(error);
   }
 
-  const { id } = req.params;
+});
+
+router.get("/myprods/:id", async (req, res) => {
+ 
+    const { id } = req.params;
+    Product.find({postedBy:(id)})
+    .then((myproduct) => {
+      res.json({ myproduct });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+ 
 });
 
 router.patch("/updateproduct/:id", async (req, res) => {
@@ -95,4 +108,7 @@ router.patch("/updateproduct/:id", async (req, res) => {
     res.status(422).json(error);
   }
 });
+
+
+
 module.exports = router;

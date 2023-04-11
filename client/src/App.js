@@ -1,4 +1,5 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Farmer from "./Components/farmer/Farmer";
 import Home from "./Components/Home/Home";
 import Login from "./Components/Login/Login";
@@ -10,8 +11,6 @@ import UserList from "./Components/Admin/src/Pages/UserList";
 import Products from "./Components/UserProducts/Products";
 import Fproducts from "./Components/Admin/src/Pages/Fproducts";
 import UpdateProd from "./Components/Admin/src/Pages/UpdateProd";
-import ForgetPswd from "./Components/ForgetPwd/ForgetPswd";
-import PswdReset from "./Components/ForgetPwd/PswdReset";
 import EditProduct from "./Components/Admin/src/Pages/EditProduct";
 import FarmerAddedProds from "./Components/farmer/FarmerAddedProds";
 import { Provider } from "react-redux";
@@ -31,12 +30,22 @@ import StockReqs from "./Components/farmer/StockReqs";
 import EditQuantity from "./Components/farmer/EditQuantity";
 import Reciept from "./Components/Orders/Reciept";
 import Farmers from "./Components/Admin/src/Pages/Farmers";
+import Customers from "./Components/Admin/src/Pages/Customers";
+import Example from "./Components/Admin/src/Pages/Analytics";
+import Income from "./Components/Admin/src/Pages/Income";
+import MyProducts from "./Components/farmer/MyProducts";
+import AllProds from "./Components/Admin/src/Pages/AllProds";
+import OTP from "./Components/ForgetPwd/OTP";
+import Reset from "./Components/ForgetPwd/Reset";
+import Test from "./Components/Login/Test";
 
 export const UserContext = createContext();
 const App = () => {
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [email, setEmail] = useState();
+  const [otp, setOTP] = useState();
   //console.log(user);
   const location = window.location.href
   useEffect(() => {
@@ -75,14 +84,16 @@ store.dispatch(getTotals());
 
   return (
     <Provider store={store}>
-    <UserContext.Provider value={{ state, dispatch }}>
+    <UserContext.Provider value={{ state, dispatch,otp, setOTP, setEmail, email }}>
     <ToastContainer/>
       <Routes>
+      <Route path="test" element={<Test/>}/>
       <Route path="/" element={user?.usertype === 'Customer' || user?.usertype === 'Farmer' ? <Navbar /> : <Home />}>
           <Route path="home" element={user ? <Home /> : <Login />} />
           <Route path="products" element={user ? <Products /> : <Login />} />
           <Route path="cart" element={user ? <Cart/> : <Login />} />
-          <Route path="orders" element={user ? <Orders/> : <Login />} />
+          <Route path="orders/:id" element={user ? <Orders/> : <Login />} />
+          
         </Route>
 
         <Route path="/" element={user ? <CommNavbar/>:<Login/>}>
@@ -97,13 +108,18 @@ store.dispatch(getTotals());
           <Route path="farmer" element={user ? <FarmerHome/> : <Login />} >
           <Route path="addprods" element={user ? < Farmer/> : <Login />} />  
           <Route path="addedprods" element={user ? <FarmerAddedProds/> : <Login />} />
-          <Route path="stockrequests" element={<StockReqs />} />
+          <Route path="stockrequests/:id" element={user?<StockReqs />:<Login />} />
+          <Route path="myprods/:id" element={user?<MyProducts />:<Login />} />          
         </Route>
+        
         <Route path="admin" element={user ? <AdminHome/> : <Login />}>
-          <Route path="fproducts" element={<Fproducts />} /> 
-          <Route path="addedprods" element={user ? <FarmerAddedProds/> : <Login />} />
-          <Route path="stockreqs" element={<StockRequests />} /> 
-          <Route path="farmers" element={<Farmers/>} /> 
+          <Route path="fproducts" element={user?<Fproducts />:<Login />} /> 
+          <Route path="allprods" element={user ? <AllProds/> : <Login />} />
+          <Route path="stockreqs" element={user ? <StockRequests />:<Login />} /> 
+          <Route path="farmers" element={user?<Farmers/>:<Login />} /> 
+          <Route path="customers" element={user?<Customers/>:<Login />} /> 
+          <Route path="analytics" element={user?<Example/>:<Login />} /> 
+          <Route path="income" element={user?<Income/>:<Login />} /> 
         </Route>
         <Route
           path="edit/:id"
@@ -121,9 +137,11 @@ store.dispatch(getTotals());
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Login />} />
         <Route path="users" element={<UserList />} />
-        <Route path="pwd-reset" element={<PswdReset/>}/>
-        <Route path="forget-pass" element={<ForgetPswd/>}/>
-        <Route path="checkout" element={user ? <Checkout/> : <Login />} />
+        {/* <Route path="pwd-reset" element={<PswdReset/>}/>
+        <Route path="forget-pass" element={<ForgetPswd/>}/> */}
+        <Route path="checkout/:id" element={user ? <Checkout/> : <Login />} />
+        <Route path="otp" element={ <OTP/>} />
+        <Route path="reset" element={ <Reset/>} />
       </Routes>
     </UserContext.Provider>
     </Provider>

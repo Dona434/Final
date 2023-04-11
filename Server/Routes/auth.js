@@ -8,6 +8,8 @@ const { JWT_SECRET } = require("../keys");
 const nodemailer = require('nodemailer');
 const requireLogin = require("../Middleware/requireLogin");
 const app = express();
+const moment = require('moment');
+
 app.use(express.json());
 
 app.set('view engine','ejs');
@@ -34,7 +36,7 @@ router.post("/signup", (req, res) => {
           password: hashedpassword,
           firstName,
           lastName,
-          phone,
+          phone:"+91"+phone,
           usertype,
         });
         user
@@ -80,84 +82,204 @@ router.post("/signin", (req, res) => {
 
 router.get("/allfarmers", requireLogin, (req, res) => {
   User.find({usertype:"Farmer"})
-    //.populate("postedBy", "_id firstName")
     .then((farmers) => {
       res.json({ farmers });
-      console.log(farmers);
     })
     .catch((err) => {
       console.log(err);
     });
 });
 
+//Regns of farmer and customer
+router.get('/api/data/:year', async (req, res) => {
+  const { year } = req.params;
+  const start = new Date(`${year}-01-01T00:00:00.000Z`);
+  const end = new Date(`${Number(year) + 1}-01-01T00:00:00.000Z`);
+  const data = [];
+  for (let i = 1; i <= 12; i++) {
+    const startOfMonth = new Date(`${year}-${i.toString().padStart(2, '0')}-01T00:00:00.000Z`);
+    const endOfMonth = new Date(`${year}-${i.toString().padStart(2, '0')}-${new Date(year, i, 0).getDate()}T23:59:59.999Z`);
+    const users = await User.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }).exec();
+    const customersCount = users.filter(user => user.usertype === 'Customer').length;
+    const farmersCount = users.filter(user => user.usertype === 'Farmer').length;
+    data.push({ month: new Date(year, i - 1, 1).toLocaleString('default', { month: 'long' }), Customers: customersCount, Farmers: farmersCount });
+  }
+ 
+  res.json(data);
+});
 
-router.put("/sendotp" ,async (req,res)=>{
-  console.log(req.body)
 
-  const _otp = Math.floor(100000 + Math.random() * 900000);
-  console.log(_otp)
 
-  const user = await User.findOne({email: req.body.email});
-    
-    //send to user mail
-    if(!user){
-      res.send({code:500,message:'User not found'})
-    }
+router.get("/allcustomers", requireLogin, (req, res) => {
+  User.find({usertype:"Customer"})
+    .then((customers) => {
+      res.json({ customers });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+router.get("/customer/:id", (req, res) => {
+  User.find({_id:mongoose.Types.ObjectId(req.params.id)})
+    .then((customer) => {
+      res.json({ customer });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
-    let testAccount = await nodemailer.createTestAccount()
+//Regn mail
 
-    let transporter = nodemailer.createTransport({
-      service:"gmail",
-
-      auth:{
+function sendRegnEmail({ recipient_email, OTP }) {
+  return new Promise((resolve, reject) => {
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
         user: "ammuzzdona@gmail.com",
         pass: "suxvyzieyleilacx",
       },
-      tls: {
-        // do not fail on invalid certs
-        rejectUnauthorized: false
-    },
     });
 
-    let info = await transporter.sendMail({
-      from:'ammuzzdona@gmail.com', //sender address
-      to: req.body.email, //list of recievers
-      subject: "OTP", //subject line
-      text: String(_otp),
-    })
+    const mail_configs = {
+      from: process.env.MY_EMAIL,
+      to: recipient_email,
+      subject: "SignUp Successfull",
+      html: `<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - OTP Email Template</title>
+  
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+  <div style="margin:50px auto;width:70%;padding:20px 0">
+    <div style="border-bottom:1px solid #eee">
+      <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Weizen Mart</a>
+    </div>
+    <p style="font-size:1.1em">Hi,</p>
+    <p>Thank you for choosing Weizen Mart. Your SignUp is successfull. Please login using your email and password. Happy Shopping</p>
+    <p style="font-size:0.9em;">Regards,<br />Weizen Mart Admin</p>
+    <hr style="border:none;border-top:1px solid #eee" />
+    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+   <p> No. 369, 13th Cross, 30th Main,</p>
+    <p>Sultanpet 2nd Street</p>
+    <p>Banglore - 560070</p>
+    <p>Karnataka, India</p>
+    </div>
+  </div>
+</div>
+<!-- partial -->
+  
+</body>
+</html>`,
+    };
+    transporter.sendMail(mail_configs, function (error, info) {
+      if (error) {
+        console.log(error);
+        return reject({ message: `An error has occured` });
+      }
+      return resolve({ message: "Email sent succesfuly" });
+    });
+  });
+}
 
-    if(info.messageId){
-      console.log(info,84)
-      User.updateOne({email:req.body.email},{otp:_otp})
-      .then((result)=>{
-        res.send({code:200, message:'otp send'});
-        console.log(result)
-      }).catch((err)=>{
-        res.send({code:500,message:"server error"});
-        console.log(err);
-      });
-      
-    }else{
-      res.send({code:500,message:'server error'})
-    }
-    
+
+router.post("/sendmail", (req, res) => {
+  sendRegnEmail(req.body)
+    .then((response) => res.send(response.message))
+    .catch((error) => res.status(500).send(error.message));
 });
 
-router.put("/submitotp",async(req,res)=>{
-  console.log(req.body)
-  const salt = await bcrypt.genSalt(10);
-    hashedpassword = await bcrypt.hash(req.body.password,salt);
+//Forget Password
+
+function sendEmail({ recipient_email, OTP }) {
+  return new Promise((resolve, reject) => {
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "ammuzzdona@gmail.com",
+        pass: "suxvyzieyleilacx",
+      },
+    });
+
+    const mail_configs = {
+      from: process.env.MY_EMAIL,
+      to: recipient_email,
+      subject: "WEIZEN MART PASSWORD RECOVERY",
+      html: `<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - OTP Email Template</title>
   
-  User.findOne({otp: req.body.otp}).then(result=>{
-    
-    //update the password
-    User.updateOne({email:result.email},{password:hashedpassword})
-    .then((result)=>{
-      res.send({code:200,message:'password updated'})
-    })
-  }).catch(err=>{
-    res.send({code:500,message:"user not found"})
-  })
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+  <div style="margin:50px auto;width:70%;padding:20px 0">
+    <div style="border-bottom:1px solid #eee">
+      <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Weizen Mart</a>
+    </div>
+    <p style="font-size:1.1em">Hi,</p>
+    <p>Thank you for choosing Weizen Mart. Use the following OTP to complete your Password Recovery Procedure. OTP is valid for 5 minutes</p>
+    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${OTP}</h2>
+    <p style="font-size:0.9em;">Regards,<br />Weizen Mart Admin</p>
+    <hr style="border:none;border-top:1px solid #eee" />
+    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+   <p> No. 369, 13th Cross, 30th Main,</p>
+    <p>Sultanpet 2nd Street</p>
+    <p>Banglore - 560070</p>
+    <p>Karnataka, India</p>
+    </div>
+  </div>
+</div>
+<!-- partial -->
+  
+</body>
+</html>`,
+    };
+    transporter.sendMail(mail_configs, function (error, info) {
+      if (error) {
+        console.log(error);
+        return reject({ message: `An error has occured` });
+      }
+      return resolve({ message: "Email sent succesfuly" });
+    });
+  });
+}
+
+
+router.post("/send_recovery_email", (req, res) => {
+  sendEmail(req.body)
+    .then((response) => res.send(response.message))
+    .catch((error) => res.status(500).send(error.message));
+});
+
+//password reset
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if email is associated with an existing user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }    
+
+ // Update user password in database
+ const saltRounds = 10;
+ const hashedPassword = await bcrypt.hash(password, saltRounds);
+ await User.updateOne({ _id: user._id }, { password: hashedPassword });
+
+ // Send success response back to client-side
+ res.status(200).json({ message: 'Password reset successfully' });
+} catch (err) {
+ console.error(err);
+ res.status(500).json({ message: 'Error resetting password' });
+}
 });
 
 module.exports = router;

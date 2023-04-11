@@ -5,6 +5,7 @@ import "./Updateprof.scss";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate,useParams } from "react-router-dom";
+import axios from 'axios';
 
 
 
@@ -13,58 +14,40 @@ const Updateprof = () => {
   const [firstName, setFname] = useState("");
   const [lastName, setLname] = useState("");
   const [phone, setPhone] = useState("");
+  const[data,setData] = useState("");
 
   let userId=JSON.parse(localStorage.getItem('user'));
+  const { id } = useParams("");
 
+  useEffect(()=>{
+    fetch(`http://localhost:5000/customer/${id}`, {
+      method:"GET",
+  headers: {
+    Authorization: "Bearer " + localStorage.getItem("jwt"),
+  },
+})
+  .then(response => response.json())
+  .then(result => {
+    console.log('Fetched document data:', result);
+    setData(result);
+  })
+  .catch(error => console.error('Error fetching document data:', error));
+},[]);
 
-const handleClick = () => {
-
-   toast.success("Profile updated")
-   navigate("/home");
-   fetch("http://localhost:5000/updateprofile/"+userId._id, {
-      method: "patch",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        phone,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.error) {
-          toast.error(data.error, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        } else {
-          toast.success(data.message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          setTimeout(() => navigate("/login"), 6000);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
+const handleClick = async(e) => {
+  e.preventDefault();
+ 
+    try {
+      await axios.put(`/updateprofile/${id}`, { firstName,lastName, phone });
+      alert('Profile updated successfully');
+      navigate("/products")
+    } catch (error) {
+      console.error(error);
+      alert('Failed to update profile');
+    }
   };
   
-  const user = JSON.parse(localStorage.getItem("user"));
+  //const user = JSON.parse(localStorage.getItem("user"));
  
   
 
@@ -77,30 +60,37 @@ const handleClick = () => {
           <input
             className="forminput"
             type="text"
-            defaultValue={user.firstName}
+            value={data.firstName}
+            //defaultValue={userId.firstName}
+            placeholder={data.firstName}
             onChange={(e) => setFname(e.target.value)}
           />
           <p className="label">Last Name</p>
           <input
             className="forminput"
             type="text"
-            defaultValue={user.lastName}
+            //defaultValue={userId.lastName}
+            // default={user.lastName}
+            value={lastName}
             onChange={(e) => setLname(e.target.value)}
           />
           <p className="label">Contact</p>
           <input
             className="forminput"
             type="text"
-            defaultValue={user.phone}
+            //defaultValue={userId.phone}
+            // default={user.phone}
+            value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
 
          <br/>
-          <button className="signup-button" onClick={() => handleClick()}>
+          <button className="signup-button" onClick={(e) => handleClick(e)}>
             Update
           </button>
           <ToastContainer />
         </div>
+        
       </div>
     </div>
   );

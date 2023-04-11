@@ -1,6 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import Announcement from '../Announcement';
 import "./Orders.css";
+import jsPDF from 'jspdf';
 import { Link } from "react-router-dom";
 
 
@@ -52,7 +53,7 @@ useEffect(()=>{
                         <h3 value={cartItems.productName}>{cartItems.productName}</h3>
                         </div>
                     </div>
-                    <div className='cart-product-price1'>{cartItems.createdAt}</div>
+                    <div className='cart-product-price1'>{cartItems.createdAt.substring(0,10)}</div>
                     <div className='cart-product-quantity1'>
                         
                         <div className='count1'>{cartItems.cartQuantity}</div>

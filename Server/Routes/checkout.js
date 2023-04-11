@@ -83,7 +83,7 @@ router.post("/checkout",async (req, res) => {
         }
       });
       const checkout = new Checkout({
-      id:userDetails.id,
+      userId:userId,
       firstName:userDetails.firstName,
       lastName:userDetails.lastName,
       email:userDetails.email,
@@ -163,8 +163,7 @@ router.post("/checkout",async (req, res) => {
   router.get("/checkout/:id",async (req,res)=>{
     let userId=req.params.id;
     let orders=await checkout.find({
-      UserId:userId,
-      status:true
+      userId:userId,
     });
     res.status(200).send({orders:orders});
     
@@ -180,51 +179,40 @@ router.post("/checkout",async (req, res) => {
     
   })
   
-            //Doubt
-  // router.get("/reciept/:id",async (req,res)=>{
-
-  //   let orderId=req.params.id;
-  //   let cartproducts=await checkout.find({
-  //     _id:orderId,
-  //     status:true
-  //   });
-
-  //   let reciept=await checkout.aggregate([
-  //     {$match:{
-  //       _id:mongoose.Types.ObjectId('63e3868812b0c67ac2086f88'),
-  //       status:true
-  //     },
-  //   },
-  //   {
-  //     $addFields:{
-  //       productId:{$toObjectId:'$productId'}
-  //     }
-  //   },
-  //   {
-  //     $lookup:{
-  //       from:'products',
-  //       localField:'productId',
-  //       foreignField:'_id',
-  //       as:'productDetails'
-  //     }
-  //   },
-  //   {
-  //     $unwind:'$productDetails'
-  //   },
-  //   {
-  //     $addFields:{
-  //       cartQuantity:'$productQuantity',
-  //       productQuantity:'$productDetails.productQuantity',
-  //       productDescription:'$productDetails.productDescription',
-  //       photo:'$productDetails.photo'
-  //     }
-  //   },
-  //   {$unset:'productDetails'}
-  //   ]);
-
-  //   res.status(200).send({reciept:reciept});
-
-  // })
+  router.get('/income/:year', async (req, res) => {
+    const selectedYear = parseInt(req.params.year);
   
+    // Find all income data for the selected year
+    const incomes = await Checkout.find({
+      createdAt: {
+        $gte: new Date(selectedYear, 0, 1),
+        $lte: new Date(selectedYear, 11, 31)
+      }
+    });
+// Create an object to store income data per month
+const incomePerMonth = {
+  January: 0,
+  February: 0,
+  March: 0,
+  April: 0,
+  May: 0,
+  June: 0,
+  July: 0,
+  August: 0,
+  September: 0,
+  October: 0,
+  November: 0,
+  December: 0
+};
+// Iterate through the income data and update incomePerMonth object
+incomes.forEach(income => {
+  const incomeMonth = new Date(income.createdAt).toLocaleString('default', { month: 'long' });
+  incomePerMonth[incomeMonth] += income.subtotal;
+});
+
+res.json({ incomePerMonth });
+});
+
+
   module.exports = router;
   

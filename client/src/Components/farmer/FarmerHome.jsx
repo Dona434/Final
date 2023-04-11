@@ -3,25 +3,27 @@ import { Outlet, Link } from "react-router-dom";
 import Announcement from "../Announcement";
 import Topbar from "./Topbar/Topbar";
 
-const NavItems = styled(Link)`
-  display: inline-block;
-  text-decoration: none;
-  color: black;
-  border: 1px solid #fff;
-  padding: 7px;
-  font-size: 13px;
-  background: transparent;
-  position: relative;
-  cursor: pointer;
-  &:hover {
-    border: 1px solid #a9740e;
-    background: #a9740e;
-    transition: 1s;
-  }
+const Dashboard = () => {
+const user = JSON.parse(localStorage.getItem("user"));
+const NavItem = styled(Link)`
+display: inline-block;
+text-decoration: none;
+color: black;
+border: 1px solid #fff;
+padding: 5px;
+font-size: 13px;
+font-weight:bold;
+background: transparent;
+position: relative;
+cursor: pointer;
+&:hover {
+  border: 1px solid #a9740e;
+  background: #a9740e;
+  transition: 1s;
+}
 `;
 
-const Dashboard = () => {
-  
+
   return (
     <>
     <Topbar/>
@@ -29,41 +31,42 @@ const Dashboard = () => {
     <StyledDashboard>
       <SideNav>
         <h3>Quick Links</h3>
-        <NavItems
+        <NavItem
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
           to="/farmer/addprods"
         >
           Add Products
-        </NavItems>
-        <NavItems
+        </NavItem>
+        <NavItem
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
           to="/farmer/addedprods"
         >
-          Products
-        </NavItems>
-        <NavItems
+         All Products
+        </NavItem>
+        <NavItem
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
-          to="/farmer/stockrequests"
+          to={`/farmer/stockrequests/${user._id}`}
         >
           Stock Requests
-        </NavItems>
-        {/* <NavLink
+        </NavItem>
+        <NavItem
           className={({ isActive }) =>
             isActive ? "link-active" : "link-inactive"
           }
-          to="/admin/users"
+          to={`/farmer/myprods/${user._id}`}
         >
-          Users
-        </NavLink> */}
+          My Products
+        </NavItem>
+       
       </SideNav>
       <Content>
-        <Outlet />
+        <Outlet/>
       </Content>
     </StyledDashboard>
     </>
@@ -82,7 +85,7 @@ const SideNav = styled.div`
   height: calc(100vh - 70px);
   position: fixed;
   overflow-y: auto;
-  width: 110px;
+  width: 170px;
   display: flex;
   flex-direction: column;
   padding: 2rem;

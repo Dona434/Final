@@ -5,6 +5,7 @@ import "./SignupElements.scss";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from 'styled-components';
+import axios from 'axios';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setpassword] = useState("");
-  const [confmPassword,confirmPassword] = useState("")
+  const [confmPassword,confirmPassword] = useState("");
   const [usertype, SetUsertype] = useState("");
   const [fnameErr,setFNameErr] = useState(false)
   const [lnameErr,setLNameErr] = useState(false)
@@ -45,6 +46,18 @@ const Signup = () => {
       toast.error("Invalid Email ID");
       return;
     }
+//send mail to registered user
+axios
+.post("http://localhost:5000/sendmail", {
+  recipient_email: email,
+})
+.catch(console.log);
+
+//send sms to regred users
+// axios.post('http://localhost:5000/sendRegnsms', { to: phone,message: "Thankyou for choosing Weizen Mart. Happy Shopping"})
+//     .then(response => console.log(response.data))
+//     .catch(error => console.log(error));
+
     fetch("http://localhost:5000/signup", {
       method: "post",
       headers: {
@@ -135,7 +148,7 @@ const handlePassword = (e1)=>{
 }
 const handleConfirmPassword = (e)=>{
     confirmPassword(e.target.value);
-    if(password != confirmPassword){
+    if(password !== confirmPassword){
        setConfmPwdErr("Password does not match");
        //console.log("not matching")
     }
@@ -189,7 +202,7 @@ const handleConfirmPassword = (e)=>{
 
           <input
             className="forminput"
-            type="text"
+            type="tel"
             placeholder="Phone"
             required
             value={phone}
@@ -216,7 +229,7 @@ const handleConfirmPassword = (e)=>{
             required
             onChange={(e) => handleConfirmPassword(e)}
           />
-          {confmPwdErr&&password!=confmPassword?<Error>Password does not match</Error>:""}
+          {confmPwdErr&&password!==confmPassword?<Error>Password does not match</Error>:""}
 
           <select
             className="forminput"

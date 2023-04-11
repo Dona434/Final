@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./stockRequests.scss";
 import SendIcon from '@mui/icons-material/Send';
 import { CardList } from "../../../UserProducts/ProductElements";
+import axios from "axios";
 
 const StockRequests = () => {
   const [data, setData] = useState([]);
@@ -22,7 +23,19 @@ const StockRequests = () => {
   
   }, []);
 
+const sendSms = (values)=>{
+ // e.preventDefault();
+ toast.success("SMS send to Customer")
+  axios.post('http://localhost:5000/send-sms', { to: values.phone,message: values.productName})
+    .then(response => console.log(response.data))
+    .catch(error => console.log(error));
+};
+
 const handleStockClick=(request)=>{
+
+  axios.post('http://localhost:5000/send-sms-farmer', { to: request.postedBy.phone,message: request.productName})
+  .then(response => console.log(response.data))
+  .catch(error => console.log(error));
 
   const user = JSON.parse(localStorage.getItem("user"));
   fetch("http://localhost:5000/stockfarmer", {
@@ -72,6 +85,7 @@ const handleStockClick=(request)=>{
     .catch((err) => {
       console.log(err);
     });
+
 }
 
 
@@ -113,13 +127,14 @@ const handleStockClick=(request)=>{
               <td>{reqs.email}</td>
              </tr>
              <tr>
-              <th>Requested Date & Time</th>
-              <td>{reqs.createdAt}</td>
+              <th>Requested Date</th>
+              <td>{reqs.createdAt.substring(0,10)}</td>
              </tr>
              <br></br>
           
           <button className="bttn1" onClick={() => handleStockClick(reqs)}>Request Stock to Farmer <SendIcon/></button>
-          {reqs.productQuantity>0?<h3 className="stockadded1">Stock Added</h3>:<h3 className="stocknotadded1">Stock not added</h3>}         
+          {reqs.productQuantity>0?<h3 className="stockadded1" style={{fontWeight:"bold"}}>Stock Added</h3>:<h3 className="stocknotadded1" style={{fontWeight:"bold"}}>Stock not added</h3>}         
+          {reqs.productQuantity>0?<button className="bttn1" onClick={() => sendSms(reqs)}>Send SMS to Customer</button>:""}        
         
           <hr style={{width:"35rem",borderBlockColor:"gold"}}></hr>
              <br></br>

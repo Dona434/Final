@@ -5,6 +5,7 @@ export const Heading = styled.h1`
   margin-bottom: 2%;
   margin-left: 9%;
   font-size: 30px;
+  font-weight:bold;
   color: rgb(169, 116, 14);
 `;
 export const CardList = styled.div`
@@ -46,7 +47,6 @@ export const CardContainer = styled.div`
   backface-visibility: hidden;
   transform: translateZ(0);
   transition: transform 0.25s ease-out;
-  
 `;
 
 export const Button = styled.button`

@@ -6,6 +6,9 @@ const StockReq = mongoose.model("stockreq");
 const StockReqFarmer = mongoose.model("stockreqfarmer")
 const requireLogin = require("../Middleware/requireLogin");
 const { route } = require("./auth");
+const sendSMS = require('../twilio');
+const sendSMSFarmer = require('../twilio1');
+const sendSMSCustomer = require('../twilio2');
 
 router.post("/stockreq", (req, res) => {
     const {
@@ -116,9 +119,9 @@ router.post("/stockreq", (req, res) => {
           });
       });
 
-      router.get("/adminreqs", requireLogin, (req, res) => {
-        StockReqFarmer.find()
-          .populate("postedBy", "_id firstName")
+      router.get("/adminreqs/:id", (req, res) => {
+        const { id } = req.params;
+        StockReqFarmer.find({postedBy:id})
           .then((farmrrequests) => {
             res.json({ farmrrequests });
           })
@@ -126,5 +129,21 @@ router.post("/stockreq", (req, res) => {
             console.log(err);
           });
       });
+     
+      router.post('/send-sms',async (req, res) => {
+        const { to,message } = req.body;
+        sendSMS(to,message);
+        res.send('SMS sent!');
+      });
+      router.post('/send-sms-farmer',async (req, res) => {
+        const { to,message } = req.body;
+        sendSMSFarmer(to,message);
+        res.send('SMS sent!');
+      });
+      // router.post('/sendRegnsms',async (req, res) => {
+      //   const { to,message } = req.body;
+      //   sendSMSCustomer(to,message);
+      //   res.send('SMS sent!');
+      // });
     
 module.exports = router;
